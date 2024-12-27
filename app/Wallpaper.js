@@ -9,72 +9,73 @@ import {
   Modal,
   Alert,
 } from "react-native";
-import { MaterialIcons } from "@expo/vector-icons"; // For icons (requires expo-vector-icons)
+import { MaterialIcons } from "@expo/vector-icons";
 import Entypo from "@expo/vector-icons/Entypo";
 
-import SideBar from "./Slider.js"; // Import the sidebar component
+import SideBar from "./Slider.js";
 import ThreeDots from "./ThreeDots.js";
 
+import WallpaperImg from "./wallpaper.json";
+
+// Static map for image resolution
+const imageMap = {
+  "kartik-kurdekar-JcY8QC675ek-unsplash.jpg": require("../assets/kartik-kurdekar-JcY8QC675ek-unsplash.jpg"),
+  "saiyam-arora-DOM1FCGZul0-unsplash.jpg": require("../assets/saiyam-arora-DOM1FCGZul0-unsplash.jpg"),
+  // Add other images here as needed
+};
+
 const Wallpaper = () => {
-  const [showWallpapers, setShowWallpapers] = useState(false); // Initially set to true to show wallpapers
-  const [selectedWallpaper, setSelectedWallpaper] = useState(null); // For previewing the selected wallpaper
-  const [selectedWallpaper1, setSelectedWallpaper1] = useState(null); // For previewing the selected wallpaper
-  const [isModalVisible, setIsModalVisible] = useState(false); // Modal visibility state
+  const [showWallpapers, setShowWallpapers] = useState(false);
+  const [selectedWallpaper, setSelectedWallpaper] = useState(null);
+  const [selectedWallpaper1, setSelectedWallpaper1] = useState(null);
+  const [selectedWallpaper3, setSelectedWallpaper3] = useState(null);
+  const [selectedWallpaper4, setSelectedWallpaper4] = useState(null);
+  const [isModalVisible, setIsModalVisible] = useState(false);
   const [isSidebarVisible, setIsSidebarVisible] = useState(false);
-  const [isDotsVisible, setIsDotsVisible] = useState(false); // Correct the typo here
-  const [activeWallpaperCategory, setActiveWallpaperCategory] = useState(null); // To track selected wallpaper category
+  const [isDotsVisible, setIsDotsVisible] = useState(false);
+  const [activeWallpaperCategory, setActiveWallpaperCategory] = useState(null);
 
-  // Images to display in the grid
-  const wallpapers = [
-    {
-      id: 1,
-      source: require("../assets/kartik-kurdekar-JcY8QC675ek-unsplash.jpg"),
-    },
-    {
-      id: 2,
-      source: require("../assets/saiyam-arora-DOM1FCGZul0-unsplash.jpg"),
-    },
-    {
-      id: 3,
-      source: require("../assets/kartik-kurdekar-JcY8QC675ek-unsplash.jpg"),
-    },
-    {
-      id: 4,
-      source: require("../assets/kartik-kurdekar-JcY8QC675ek-unsplash.jpg"),
-    },
-    {
-      id: 5,
-      source: require("../assets/kartik-kurdekar-JcY8QC675ek-unsplash.jpg"),
-    },
-    {
-      id: 6,
-      source: require("../assets/kartik-kurdekar-JcY8QC675ek-unsplash.jpg"),
-    },
-  ];
+  // Resolve the image sources using the static imageMap
+  const wallpapers = WallpaperImg.wallpapers.map((item) => ({
+    ...item,
+    source: imageMap[item.source], // Resolve image path
+  }));
 
-  const wallpapers1 = [
-    {
-      id: 1,
-      source: require("../assets/kartik-kurdekar-JcY8QC675ek-unsplash.jpg"),
-    },
-    {
-      id: 2,
-      source: require("../assets/saiyam-arora-DOM1FCGZul0-unsplash.jpg"),
-    },
-    {
-      id: 3,
-      source: require("../assets/kartik-kurdekar-JcY8QC675ek-unsplash.jpg"),
-    },
-    {
-      id: 4,
-      source: require("../assets/kartik-kurdekar-JcY8QC675ek-unsplash.jpg"),
-    },
-  ];
+  const wallpapers1 = WallpaperImg.wallpapers1.map((item) => ({
+    ...item,
+    source: imageMap[item.source],
+  }));
 
-  // Function to render wallpaper grid based on active category
+  const wallpapers3 = WallpaperImg.wallpapers3.map((item) => ({
+    ...item,
+    source: imageMap[item.source],
+  }));
+
+  const wallpapers4 = WallpaperImg.wallpapers4.map((item) => ({
+    ...item,
+    source: imageMap[item.source],
+  }));
+
+  // Render wallpapers for selected category
   const renderWallpapers = () => {
-    const wallpapersToDisplay =
-      activeWallpaperCategory === "mobile" ? wallpapers : wallpapers1;
+    let wallpapersToDisplay = [];
+    switch (activeWallpaperCategory) {
+      case "mobile":
+        wallpapersToDisplay = wallpapers;
+        break;
+      case "tablet":
+        wallpapersToDisplay = wallpapers1;
+        break;
+      case "category3":
+        wallpapersToDisplay = wallpapers3;
+        break;
+      case "category4":
+        wallpapersToDisplay = wallpapers4;
+        break;
+      default:
+        wallpapersToDisplay = [];
+        break;
+    }
 
     return (
       <ScrollView>
@@ -84,8 +85,7 @@ const Wallpaper = () => {
           >
             <MaterialIcons name="menu" size={24} color="white" />
           </TouchableOpacity>
-
-          <Text style={styles.headerTitle}>Mahindra Thar Wallpap...</Text>
+          <Text style={styles.headerTitle}>Mahindra Thar Wallpapers</Text>
           <MaterialIcons name="refresh" size={24} color="white" />
           <TouchableOpacity onPress={() => setIsDotsVisible(!isDotsVisible)}>
             <Entypo name="dots-three-vertical" size={20} color="white" />
@@ -96,9 +96,15 @@ const Wallpaper = () => {
             <View key={wallpaper.id} style={styles.gridItem}>
               <TouchableOpacity
                 onPress={() => {
-                  activeWallpaperCategory === "mobile"
-                    ? setSelectedWallpaper(wallpaper.source)
-                    : setSelectedWallpaper1(wallpaper.source);
+                  if (activeWallpaperCategory === "mobile") {
+                    setSelectedWallpaper(wallpaper.source);
+                  } else if (activeWallpaperCategory === "tablet") {
+                    setSelectedWallpaper1(wallpaper.source);
+                  } else if (activeWallpaperCategory === "category3") {
+                    setSelectedWallpaper3(wallpaper.source);
+                  } else if (activeWallpaperCategory === "category4") {
+                    setSelectedWallpaper4(wallpaper.source);
+                  }
                   setIsModalVisible(true);
                 }}
               >
@@ -115,28 +121,19 @@ const Wallpaper = () => {
     );
   };
 
-  // Function to handle setting the wallpaper
   const setWallpaper = () => {
-    Alert.alert(
-      "Wallpaper Set",
-      "The selected wallpaper has been set successfully!"
-    );
+    Alert.alert("Wallpaper Set", "The selected wallpaper has been set successfully!");
     setIsModalVisible(false);
   };
 
   return (
     <View style={styles.container}>
-      {/* Conditionally render the sidebar */}
       {isDotsVisible && (
-        <ThreeDots
-          setIsDotsVisible={setIsDotsVisible}
-          setShowWallpapers={setShowWallpapers}
-        />
+        <ThreeDots setIsDotsVisible={setIsDotsVisible} setShowWallpapers={setShowWallpapers} />
       )}
       {isSidebarVisible && (
         <SideBar setIsSidebarVisible={setIsSidebarVisible} />
       )}
-
       <ScrollView>
         <View>
           {!showWallpapers ? (
@@ -144,7 +141,7 @@ const Wallpaper = () => {
               <TouchableOpacity
                 onPress={() => {
                   setShowWallpapers(true);
-                  setActiveWallpaperCategory("mobile"); // Show mobile wallpapers
+                  setActiveWallpaperCategory("mobile");
                 }}
                 style={styles.mainImageContainer}
               >
@@ -154,11 +151,10 @@ const Wallpaper = () => {
                 />
                 <Text style={styles.title}>Mobile Wallpapers</Text>
               </TouchableOpacity>
-
               <TouchableOpacity
                 onPress={() => {
                   setShowWallpapers(true);
-                  setActiveWallpaperCategory("tablet"); // Show tablet wallpapers
+                  setActiveWallpaperCategory("tablet");
                 }}
                 style={styles.mainImageContainer}
               >
@@ -168,15 +164,26 @@ const Wallpaper = () => {
                 />
                 <Text style={styles.title}>Tablet Wallpapers</Text>
               </TouchableOpacity>
-
-              <TouchableOpacity style={styles.mainImageContainer}>
+              <TouchableOpacity
+                onPress={() => {
+                  setShowWallpapers(true);
+                  setActiveWallpaperCategory("category3");
+                }}
+                style={styles.mainImageContainer}
+              >
                 <Image
                   source={require("../assets/pexels-eberhardgross-443446.jpg")}
                   style={styles.mainImage}
                 />
                 <Text style={styles.title}>More Mobile Wallpapers</Text>
               </TouchableOpacity>
-              <TouchableOpacity style={styles.mainImageContainer}>
+              <TouchableOpacity
+                onPress={() => {
+                  setShowWallpapers(true);
+                  setActiveWallpaperCategory("category4");
+                }}
+                style={styles.mainImageContainer}
+              >
                 <Image
                   source={require("../assets/pexels-samandgos-709552.jpg")}
                   style={styles.mainImage}
@@ -185,11 +192,9 @@ const Wallpaper = () => {
               </TouchableOpacity>
             </>
           ) : (
-            renderWallpapers() // This part will render the wallpapers based on selected category
+            renderWallpapers()
           )}
         </View>
-
-        {/* Modal for previewing the wallpaper */}
         <Modal
           visible={isModalVisible}
           transparent={true}
@@ -197,13 +202,12 @@ const Wallpaper = () => {
           onRequestClose={() => setIsModalVisible(false)}
         >
           <View style={styles.modalContainer}>
-            {selectedWallpaper && (
-              <Image source={selectedWallpaper} style={styles.modalImage} />
+            {(selectedWallpaper || selectedWallpaper1 || selectedWallpaper3 || selectedWallpaper4) && (
+              <Image
+                source={selectedWallpaper || selectedWallpaper1 || selectedWallpaper3 || selectedWallpaper4}
+                style={styles.modalImage}
+              />
             )}
-            {selectedWallpaper1 && (
-              <Image source={selectedWallpaper1} style={styles.modalImage1} />
-            )}
-
             <View style={styles.buttonContainer}>
               <TouchableOpacity
                 style={styles.setWallpaperButton}
@@ -229,22 +233,18 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#fff",
-    marginBottom:50,
+    marginBottom: 50,
   },
   mainImage: {
     width: "100%",
-    display: "flex",
-    justifyContent: "center",
-    alignContent: "center",
     height: 250,
   },
-
   mainImageContainer: {
     marginBottom: 0,
     marginLeft: 25,
     marginRight: 25,
     marginTop: 25,
-    borderBottomWidth: 2, // Adds an underline
+    borderBottomWidth: 2,
     borderBottomColor: "#a4b2b3",
   },
   header: {
@@ -304,11 +304,6 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "90%",
   },
-  modalImage1: {
-    width: "100%",
-    height: "0%",
-  },
-
   buttonContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -340,7 +335,6 @@ const styles = StyleSheet.create({
   buttonText: {
     color: "white",
     fontSize: 16,
-    fontWeight: "bold",
   },
 });
 
